@@ -6,7 +6,7 @@ import pymssql
 app = Flask(__name__)
 
 
-@app.route('/criteria_json/<string_param>', methods=['GET', 'POST'])
+@app.route('/criteria_json/<string_param>', methods=['GET', 'POST'])  # string_param-> calls/chats
 def process_json(string_param):
     try:
         conn = pymssql.connect(
@@ -18,24 +18,7 @@ def process_json(string_param):
 
         database = DataBase(conn)
 
-        if string_param == "calls":
-            check_group_value = 4
-        elif string_param == "chats":
-            check_group_value = 3
-        else:
-            return "Invalid Parameter"
-
-        query = """SELECT cl.Code, cl.Promt
-        FROM CheckGroupLists cgl
-        JOIN CheckLists cl ON cgl.CheckList = cl.id
-        WHERE cgl.CheckGroup = {}
-        FOR JSON PATH;""".format(check_group_value)
-
-        rows = database.execute_query_json(query)
-
-        res = database.formatting_to_json(rows)
-
-        conn.close()
+        res = database.execute_query_json(string_param)
 
         return PromptBuilder().create_prompt_str(res)
 
