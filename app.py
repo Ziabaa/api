@@ -20,7 +20,9 @@ def process_json(string_param):
 
         res = database.execute_query_json(string_param)
 
-        return PromptBuilder().create_prompt_str(res)
+        json_res = database.formatting_to_json(res)
+
+        return PromptBuilder().create_prompt_str(json_res)
 
     except Exception as e:
         return str(e), 500
@@ -28,3 +30,4 @@ def process_json(string_param):
 
 if __name__ == '__main__':
     app.run(debug=True)
+
